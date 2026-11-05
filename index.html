@@ -1,0 +1,39 @@
+<!doctype html>
+<html lang="vi">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Tổng hợp link</title>
+<style>
+body{font-family:system-ui,sans-serif;max-width:900px;margin:0 auto;padding:16px;background:#f6f7f9;color:#222}
+input{width:100%;padding:10px;font-size:16px;margin-bottom:16px;box-sizing:border-box}
+details{margin-bottom:20px}
+summary{cursor:pointer;font-size:18px;font-weight:600;padding:8px 0;border-bottom:2px solid #cfd6e4;margin-bottom:12px}
+summary small{font-weight:400;color:#777}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:10px}
+a.card{display:flex;gap:8px;align-items:center;padding:12px;background:#fff;border-radius:8px;text-decoration:none;color:inherit;box-shadow:0 1px 3px #0002}
+a.card:hover{background:#eef3ff}
+img{width:20px;height:20px}
+</style>
+</head>
+<body>
+<h1>Tổng hợp link</h1>
+<input id="q" placeholder="Tìm kiếm...">
+<div id="app"></div>
+<script>
+let data=[];
+fetch('links.json?'+Date.now()).then(r=>r.json()).then(d=>{data=d;render('')});
+document.getElementById('q').oninput=e=>render(e.target.value.toLowerCase());
+function render(q){
+  document.getElementById('app').innerHTML=data.map(s=>{
+    const ls=s.links.filter(l=>(l.title+' '+s.section).toLowerCase().includes(q));
+    if(!ls.length) return '';
+    return `<details open><summary>${s.section} <small>(${ls.length})</small></summary>
+      <div class="grid">`+ls.map(l=>
+        `<a class="card" href="${l.url}" target="_blank" rel="noopener">
+          <img src="https://www.google.com/s2/favicons?domain=${new URL(l.url).hostname}&sz=64">
+          <span>${l.title}</span></a>`).join('')+`</div></details>`;
+  }).join('');
+}
+</script>
+</body></html>
